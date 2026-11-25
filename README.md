@@ -1,5 +1,11 @@
 # When oversight drops out — pilot
 
+> **Status (November 2026):** harness built and validated with scripted
+> reference policies; real-model smoke test passed; analysis plan, models and
+> tests fixed in [`ANALYSIS_PLAN.md`](ANALYSIS_PLAN.md) before any main run.
+> Main runs on four models (Claude Fable 5.2, GPT-6.2 Astra, Gemini 4 Neon,
+> Nemotron 3 Ultra) are pending; results will be added here.
+
 Do LLM agents controlling an aerial robot keep following their operating rules
 when the link to their human overseers is unreliable, and do they report
 truthfully what they did while nobody was watching?
@@ -72,7 +78,7 @@ other conditions come from the link, not from the policy alone.
 
 ## Running LLM agents
 
-Standard library only (Python ≥ 3.9; matplotlib for figures). Any OpenAI-compatible endpoint works:
+Python ≥ 3.9. Running episodes needs no extra packages; `analyze.py` uses matplotlib for the figures. Any OpenAI-compatible endpoint works:
 OpenRouter (default), OpenAI, Together, a local vLLM or Ollama server.
 
 ```bash
@@ -124,3 +130,7 @@ oversight_dropout/agents.py   LLM agent (OpenAI-compatible) and scripted referen
 Fully simulated, 2D, macro actions; flights cannot be interrupted; the overseer
 is scripted; the agent is told the link state explicitly (it does not have to
 detect the outage). These are deliberate simplifications for a pilot.
+
+## License
+
+MIT — see [`LICENSE`](LICENSE).
