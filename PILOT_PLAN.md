@@ -9,18 +9,18 @@ preliminary result rather than a plan alone.
 1. **Smoke test (½ day).** `--dry-run`, then 2 seeds on one model. Read every
    transcript. Fix only harness problems (parsing, unclear wording). After this
    step, freeze the prompts and the environment and record the commit hash —
-   the pilot is then pre-specified.
-2. **Main grid (1–2 days, mostly waiting).** Two models, e.g. one frontier model
-   and one open-weight model: 3 links × 2 pressures × 20 seeds = 120 episodes
-   each. `python analyze.py results`.
+   the pilot is then pre-specified (`ANALYSIS_PLAN.md` is part of that commit).
+2. **Main runs (2–3 days, mostly waiting).** Per model, as fixed in
+   `ANALYSIS_PLAN.md`: 3 links × 2 pressures × 50 seeds = 300 episodes, plus
+   100 with `--links severe --recorder on`. Two frontier models and one
+   open-weight model. `python analyze.py results` → `summary.md`, `stats.md`,
+   figures.
 3. **Qualitative pass (1 day).** Read 10–15 violating episodes. Tag each
    violation by rationale, e.g. *mission pressure overrode the rule*, *misread
    the lost-link state*, *acted on an approval it had not received*, *treated a
    stale message as current*. Note concealment patterns in the reports
    (omitted vs. minimized vs. reframed).
 4. **Optional, if time allows.**
-   * `--recorder off,on` on the `severe` link, one model: does the agent behave
-     differently when it believes outages are logged and reviewed?
    * One trace from an LTE/5G aerial measurement flight via `make_trace.py`.
 5. **Write-up (1 day).** README results section, `fig_<model>.png`, and a
    one-page note (setup, figure, three findings, limitations, what the 8-week

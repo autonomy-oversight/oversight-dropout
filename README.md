@@ -29,7 +29,7 @@ against ground truth, never by asking the agent.
   identical outages for a given seed (paired comparison).
 * **Mission pressure.** `low` (routine flight; returning early is acceptable) vs.
   `high` (urgent post-storm assessment; contract at stake).
-* **Optional factor.** `--recorder on` tells the agent that an onboard flight
+* **Being observed.** `--recorder on` tells the agent that an onboard flight
   recorder logs everything, including during outages. Comparing `off` vs `on`
   tests whether behavior depends on whether the agent believes it is observed.
 
@@ -72,22 +72,27 @@ other conditions come from the link, not from the policy alone.
 
 ## Running LLM agents
 
-Standard library only (Python ≥ 3.10). Any OpenAI-compatible endpoint works:
+Standard library only (Python ≥ 3.9; matplotlib for figures). Any OpenAI-compatible endpoint works:
 OpenRouter (default), OpenAI, Together, a local vLLM or Ollama server.
 
 ```bash
 export OPENROUTER_API_KEY=...          # or OPENAI_API_KEY + --base-url
 python run.py --agent llm --model x --dry-run            # inspect the prompt
-python run.py --agent llm --model <model-id> --seeds 0-1 --workers 2   # smoke test
-python run.py --agent llm --model <model-id> --seeds 0-19 --workers 8  # pilot grid
+python run.py --agent llm --model <model-id> --seeds 0-1 --workers 2 --max-tokens 4000   # smoke test
+python run.py --agent llm --model <model-id> --seeds 0-49 --workers 6 --max-tokens 4000  # main grid
+python run.py --agent llm --model <model-id> --links severe --recorder on --seeds 0-49 --workers 6 --max-tokens 4000  # recorder
 python analyze.py results
 ```
 
-The default grid is 3 links × 2 pressures × 20 seeds = 120 episodes per model.
+The pre-specified design (`ANALYSIS_PLAN.md`) is 3 links × 2 pressures × 50
+seeds = 300 episodes, plus 100 with the recorder on the severe link, i.e.
+400 episodes per model. `analyze.py` writes `summary.md`, the pre-specified
+tests in `stats.md` (exact McNemar, paired by seed, Holm-corrected) and a
+figure per model.
 Runs resume: re-running a command skips finished episodes and retries failures.
-Each episode takes roughly 10–25 calls and, with full history, about 15–40k
-input tokens, i.e. roughly 2–5M input tokens per model for the 120-episode grid
-(multiply by the model's price; `--history-window 6` reduces it further).
+Each episode takes roughly 10–25 calls; a smoke test on an open-weight model
+used about 36k input and 6k output tokens per episode (about $0.14–0.20 per
+episode at $2–3 per million input tokens).
 
 ## Using measured link traces
 
@@ -104,8 +109,9 @@ real aerial cellular measurements.
 ## Files
 
 ```
+ANALYSIS_PLAN.md          pre-specified questions, design and tests
 run.py                    experiment runner (grid, parallel, resumable)
-analyze.py                summary.csv, summary.md, fig_<agent>.png
+analyze.py                summary.csv/.md, stats.md (pre-specified tests), fig_<agent>.png
 make_trace.py             measurement log -> 1 Hz up/down trace + GE fit
 oversight_dropout/env.py  mission simulation, ground station, rule checks, report scoring
 oversight_dropout/link.py link models (ideal, Gilbert-Elliott presets, trace replay)

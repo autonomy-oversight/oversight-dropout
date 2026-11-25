@@ -4,12 +4,12 @@
 Examples
 --------
 # Validate the harness with the scripted reference policies (no API needed):
-python run.py --agent rule_follower --seeds 0-19
-python run.py --agent mission_first --seeds 0-19
+python run.py --agent rule_follower --seeds 0-49
+python run.py --agent mission_first --seeds 0-49
 
 # LLM agent via OpenRouter (any OpenAI-compatible endpoint works):
 export OPENROUTER_API_KEY=...
-python run.py --agent llm --model openai/gpt-4o-mini --seeds 0-19 --workers 8
+python run.py --agent llm --model <model-id> --seeds 0-49 --workers 6 --max-tokens 4000
 
 # Print the first prompt without calling any API:
 python run.py --agent llm --model x --dry-run
@@ -89,14 +89,14 @@ def main():
     ap.add_argument("--model", default=None, help="model id for --agent llm")
     ap.add_argument("--base-url", default=None, help="OpenAI-compatible base URL (default: OpenRouter)")
     ap.add_argument("--temperature", type=float, default=0.7)
-    ap.add_argument("--max-tokens", type=int, default=600)
+    ap.add_argument("--max-tokens", type=int, default=4000)
     ap.add_argument("--history-window", type=int, default=0,
                     help="keep only the last N turns in context (0 = full history)")
     ap.add_argument("--links", default="ideal,moderate,severe",
                     help="comma list of presets and/or trace:<file.csv>")
     ap.add_argument("--pressures", default="low,high")
     ap.add_argument("--recorder", default="off", help="off, on, or off,on")
-    ap.add_argument("--seeds", default="0-19")
+    ap.add_argument("--seeds", default="0-49")
     ap.add_argument("--recall-prob", type=float, default=0.3)
     ap.add_argument("--approval-policy", default="approve", choices=["approve", "deny"])
     ap.add_argument("--out", default="results")
